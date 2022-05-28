@@ -48,8 +48,6 @@ class PersonController {
 
 
 
-
-
     @GetMapping("/people")
     CollectionModel<EntityModel<Person>> all() {
 
@@ -60,6 +58,19 @@ class PersonController {
         return CollectionModel.of(people, linkTo(methodOn(PersonController.class).all()).withSelfRel());
     }
 
+    @GetMapping("/people/{id}")
+    EntityModel<Person> getByName(@PathVariable Long id) {
+        Person temp = null;
+        List<Person> people = repository.findAll();
+        for(Person person : people){
+            if((person.getId()).equals(id))
+            {
+                temp=person;
+                break;
+            }
+        }
+        return assembler.toModel(temp);
+    }
     @PutMapping("/people/{id}")
     ResponseEntity<?> replacePerson(@RequestBody Person newPerson, @PathVariable Long id) {
 
@@ -75,6 +86,7 @@ class PersonController {
                 });
 
         EntityModel<Person> entityModel = assembler.toModel(updatedPerson);
+
 
         return ResponseEntity //
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()) //
