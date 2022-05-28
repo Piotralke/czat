@@ -9,23 +9,41 @@ class Message {
 
     private @Id @GeneratedValue(strategy = GenerationType.AUTO) Long id;
 
-    private String description;
+    private String text;
     private Status status;
-
+    private Long conversationId;
+    private Long senderId;
     public Message() {}
 
-    Message(String description, Status status) {
-
-        this.description = description;
+    Message(Long conversationId,Long senderId, String text, Status status) {
+        this.conversationId = conversationId;
+        this.senderId = senderId;
+        this.text = text;
         this.status = status;
+    }
+
+    public Long getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(Long conversationId) {
+        this.conversationId = conversationId;
+    }
+
+    public Long getsenderId() {
+        return senderId;
+    }
+
+    public void setsenderId(Long senderId) {
+        this.senderId = senderId;
     }
 
     public Long getId() {
         return this.id;
     }
 
-    public String getDescription() {
-        return this.description;
+    public String getText() {
+        return this.text;
     }
 
     public Status getStatus() {
@@ -36,8 +54,8 @@ class Message {
         this.id = id;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setText(String text) {
+        this.text = text;
     }
 
     public void setStatus(Status status) {
@@ -52,17 +70,18 @@ class Message {
         if (!(o instanceof Message))
             return false;
         Message message = (Message) o;
-        return Objects.equals(this.id, message.id) && Objects.equals(this.description, message.description)
+        return Objects.equals(this.id, message.id) && Objects.equals(this.conversationId,message.conversationId)
+                && Objects.equals(this.text, message.text)
                 && this.status == message.status;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id, this.description, this.status);
+        return Objects.hash(this.id, this.conversationId, this.text, this.status);
     }
 
     @Override
     public String toString() {
-        return "Message{" + "id=" + this.id + ", description='" + this.description + '\'' + ", status=" + this.status + '}';
+        return "Message{" + "id=" + this.id + ", conversationId=" + this.conversationId + ", senderID=" + this.senderId +  ", text='" + this.text + '\'' + ", status=" + this.status + '}';
     }
 }

@@ -9,12 +9,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
+import static com.projekt.czat.ConversationController.*;
 @RestController
 class MessageController {
 
@@ -27,36 +28,24 @@ class MessageController {
         this.assembler = assembler;
     }
 
-    @GetMapping("/messages")
-    CollectionModel<EntityModel<Message>> all() {
-
-        List<EntityModel<Message>> messages = messageRepository.findAll().stream() //
+    @GetMapping("/people/{id}/conversations/{convId}/messages")
+    CollectionModel<EntityModel<Message>> all(@PathVariable Long id,@PathVariable Long convId) {
+        List<Message> temp = new ArrayList<>();
+        List<Message> messages = messageRepository.findAll();
+        for(Message message : messages){
+            if((message.getConversationId().equals(convId)))
+            {
+                temp.add(message);
+            }
+        }
+        List<EntityModel<Message>> messageEntity = temp.stream() //
                 .map(assembler::toModel) //
                 .collect(Collectors.toList());
 
-        return CollectionModel.of(messages, //
-                linkTo(methodOn(MessageController.class).all()).withSelfRel());
+        return CollectionModel.of(messageEntity, linkTo(methodOn(MessageController.class).all(id,convId)).withSelfRel());
+
     }
-
-    @GetMapping("/messages/{id}")
-    EntityModel<Message> one(@PathVariable Long id) {
-
-        Message message = messageRepository.findById(id) //
-                .orElseThrow(() -> new MessageNotFoundException(id));
-
-        return assembler.toModel(message);
-    }
-
-    @PostMapping("/messages")
-    ResponseEntity<EntityModel<Message>> newMessage(@RequestBody Message message) {
-
-        message.setStatus(Status.IN_PROGRESS);
-        Message newMessage = messageRepository.save(message);
-
-        return ResponseEntity //
-                .created(linkTo(methodOn(MessageController.class).one(newMessage.getId())).toUri()) //
-                .body(assembler.toModel(newMessage));
-    }
+    
     @DeleteMapping("/messages/{id}/cancel")
     ResponseEntity<?> cancel(@PathVariable Long id) {
 

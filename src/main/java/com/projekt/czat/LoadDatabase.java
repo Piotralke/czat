@@ -12,7 +12,7 @@ class LoadDatabase {
     private static final Logger log = LoggerFactory.getLogger(LoadDatabase.class);
 
     @Bean
-    CommandLineRunner initDatabase(PersonRepository personRepository, MessageRepository messageRepository) {
+    CommandLineRunner initDatabase(PersonRepository personRepository, MessageRepository messageRepository, ConversationRepository conversationRepository) {
 
         return args -> {
             personRepository.save(new Person("Bilbo", "Baggins", "burglar"));
@@ -26,8 +26,11 @@ class LoadDatabase {
 
             messageRepository.findAll().forEach(message -> {
                 log.info("Preloaded " + message);
-            });
 
+            });
+            conversationRepository.save(new Conversation(1l,2l));
+
+            conversationRepository.findAll().forEach(conversation -> log.info("Preloaded " + conversation));
         };
     }
 }

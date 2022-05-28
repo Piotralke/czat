@@ -1,6 +1,7 @@
 package com.projekt.czat;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.hateoas.CollectionModel;
@@ -44,14 +45,7 @@ class PersonController {
 
     // Single item
 
-    @GetMapping("/people/{id}")
-    EntityModel<Person> one(@PathVariable Long id) {
 
-        Person person = repository.findById(id) //
-                .orElseThrow(() -> new PersonNotFoundException(id));
-
-        return assembler.toModel(person);
-    }
 
 
 
@@ -94,4 +88,10 @@ class PersonController {
 
         return ResponseEntity.noContent().build();
     }
+
+
+
+
+
+
 }
