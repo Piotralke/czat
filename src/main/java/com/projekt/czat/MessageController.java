@@ -2,6 +2,7 @@ package com.projekt.czat;
 
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.http.HttpHeaders;
@@ -27,7 +28,15 @@ class MessageController {
         this.messageRepository = messageRepository;
         this.assembler = assembler;
     }
+    @PostMapping("/messages")
+    ResponseEntity<?> newMessage(@RequestBody Message newMessage) {
 
+        EntityModel<Message> entityModel = assembler.toModel(messageRepository.save(newMessage));
+
+        return ResponseEntity //
+                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()) //
+                .body(entityModel);
+    }
     @GetMapping("/people/{id}/conversations/{convId}/messages")
     CollectionModel<EntityModel<Message>> all(@PathVariable Long id,@PathVariable Long convId) {
         List<Message> temp = new ArrayList<>();
@@ -45,41 +54,15 @@ class MessageController {
         return CollectionModel.of(messageEntity, linkTo(methodOn(MessageController.class).all(id,convId)).withSelfRel());
 
     }
-    
-    @DeleteMapping("/messages/{id}/cancel")
-    ResponseEntity<?> cancel(@PathVariable Long id) {
+
+    @PutMapping("/messages/{id}")
+    ResponseEntity<?> updateMessage(@PathVariable Long id) {
 
         Message message = messageRepository.findById(id) //
                 .orElseThrow(() -> new MessageNotFoundException(id));
 
-        if (message.getStatus() == Status.IN_PROGRESS) {
-            message.setStatus(Status.CANCELLED);
-            return ResponseEntity.ok(assembler.toModel(messageRepository.save(message)));
-        }
+        message.setStatus(Status.ODCZYTANO);
+        return ResponseEntity.ok(assembler.toModel(messageRepository.save(message)));
 
-        return ResponseEntity //
-                .status(HttpStatus.METHOD_NOT_ALLOWED) //
-                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) //
-                .body(Problem.create() //
-                        .withTitle("Method not allowed") //
-                        .withDetail("You can't cancel an message that is in the " + message.getStatus() + " status"));
-    }
-    @PutMapping("/messages/{id}/complete")
-    ResponseEntity<?> complete(@PathVariable Long id) {
-
-        Message message = messageRepository.findById(id) //
-                .orElseThrow(() -> new MessageNotFoundException(id));
-
-        if (message.getStatus() == Status.IN_PROGRESS) {
-            message.setStatus(Status.COMPLETED);
-            return ResponseEntity.ok(assembler.toModel(messageRepository.save(message)));
-        }
-
-        return ResponseEntity //
-                .status(HttpStatus.METHOD_NOT_ALLOWED) //
-                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE) //
-                .body(Problem.create() //
-                        .withTitle("Method not allowed") //
-                        .withDetail("You can't complete an message that is in the " + message.getStatus() + " status"));
     }
 }

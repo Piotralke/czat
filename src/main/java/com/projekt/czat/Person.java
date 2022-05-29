@@ -14,15 +14,17 @@ class Person {
     private @Id @GeneratedValue(strategy = GenerationType.AUTO) Long id;
     private String firstName;
     private String lastName;
-    private String role;
+    private String login;
+    private String password;
 
     public Person() {}
 
-    Person(String firstName, String lastName, String role) {
+    Person(String firstName, String lastName, String login, String password) {
 
         this.firstName = firstName;
         this.lastName = lastName;
-        this.role = role;
+        this.login = login;
+        this.password = password;
     }
 
     public String getName() {
@@ -47,10 +49,6 @@ class Person {
         return this.lastName;
     }
 
-    public String getRole() {
-        return this.role;
-    }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -63,8 +61,20 @@ class Person {
         this.lastName = lastName;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
@@ -76,17 +86,18 @@ class Person {
             return false;
         Person person = (Person) o;
         return Objects.equals(this.id, person.id) && Objects.equals(this.firstName, person.firstName)
-                && Objects.equals(this.lastName, person.lastName) && Objects.equals(this.role, person.role);
+                && Objects.equals(this.lastName, person.lastName) && Objects.equals(this.login, person.login)
+                && Objects.equals(this.password, person.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id, this.firstName, this.lastName, this.role);
+        return Objects.hash(this.id, this.firstName, this.lastName, this.login, this.password);
     }
 
     @Override
     public String toString() {
         return "Person{" + "id=" + this.id + ", firstName='" + this.firstName + '\'' + ", lastName='" + this.lastName
-                + '\'' + ", role='" + this.role + '\'' + '}';
+                + '\'' + ", login='" + this.login + '\'' + '}';
     }
 }

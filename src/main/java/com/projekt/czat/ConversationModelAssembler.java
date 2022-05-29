@@ -15,7 +15,8 @@ class ConversationModelAssembler implements RepresentationModelAssembler<Convers
         // Unconditional links to single-item resource and aggregate root
 
         EntityModel<Conversation> conversationModel = EntityModel.of(conversation,
-                linkTo(methodOn(ConversationController.class).getPersonConversations(conversation.getFirstId())).withRel("conversations"));
+                linkTo(methodOn(ConversationController.class).getPersonConversations(conversation.getFirstId())).withRel("conversations"),
+                linkTo(methodOn(ConversationController.class).getPersonConversations(conversation.getSecondId())).withRel("conversations"));
 
         return conversationModel;
     }

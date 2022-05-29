@@ -43,11 +43,6 @@ class PersonController {
                 .body(entityModel);
     }
 
-    // Single item
-
-
-
-
     @GetMapping("/people")
     CollectionModel<EntityModel<Person>> all() {
 
@@ -59,17 +54,13 @@ class PersonController {
     }
 
     @GetMapping("/people/{id}")
-    EntityModel<Person> getByName(@PathVariable Long id) {
-        Person temp = null;
-        List<Person> people = repository.findAll();
-        for(Person person : people){
-            if((person.getId()).equals(id))
-            {
-                temp=person;
-                break;
-            }
-        }
-        return assembler.toModel(temp);
+    EntityModel<Person> one(@PathVariable Long id) {
+
+        Person person  = repository.findById(id)
+                .orElseThrow(()-> new PersonNotFoundException(id));;
+
+        return assembler.toModel(person);
+
     }
     @PutMapping("/people/{id}")
     ResponseEntity<?> replacePerson(@RequestBody Person newPerson, @PathVariable Long id) {
@@ -77,7 +68,8 @@ class PersonController {
         Person updatedPerson = repository.findById(id) //
                 .map(person -> {
                     person.setName(newPerson.getName());
-                    person.setRole(newPerson.getRole());
+                    person.setLogin(newPerson.getLogin());
+                    person.setPassword(newPerson.getPassword());
                     return repository.save(person);
                 }) //
                 .orElseGet(() -> {

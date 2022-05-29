@@ -15,14 +15,14 @@ class LoadDatabase {
     CommandLineRunner initDatabase(PersonRepository personRepository, MessageRepository messageRepository, ConversationRepository conversationRepository) {
 
         return args -> {
-            personRepository.save(new Person("Bilbo", "Baggins", "burglar"));
-            personRepository.save(new Person("Frodo", "Baggins", "thief"));
+            personRepository.save(new Person("Bilbo", "Baggins", "bilbo123", "gandalf321"));
+            personRepository.save(new Person("Frodo", "Baggins", "frodo420", "ring2137"));
 
             personRepository.findAll().forEach(person -> log.info("Preloaded " + person));
 
 
-            messageRepository.save(new Message(5l,1l,"MacBook Pro", Status.COMPLETED));
-            messageRepository.save(new Message(5l,2l,"iPhone", Status.IN_PROGRESS));
+            messageRepository.save(new Message(5l,1l,"MacBook Pro", Status.WYSLANO));
+            messageRepository.save(new Message(5l,2l,"iPhone", Status.ODCZYTANO));
 
             messageRepository.findAll().forEach(message -> {
                 log.info("Preloaded " + message);
