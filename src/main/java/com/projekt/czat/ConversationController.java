@@ -38,6 +38,8 @@ class ConversationController {
                 temp.add(conversation);
             }
         }
+        if(temp.isEmpty())
+            throw new ConversationNotFoundException(id);
         List<EntityModel<Conversation>> conversationEntity = temp.stream() //
                 .map(assembler::toModel) //
                 .collect(Collectors.toList());

@@ -28,14 +28,23 @@ class MessageController {
         this.messageRepository = messageRepository;
         this.assembler = assembler;
     }
-    @PostMapping("/messages")
-    ResponseEntity<?> newMessage(@RequestBody Message newMessage) {
+    @PostMapping("/conversations/{convId}/messages")
+    ResponseEntity<?> newMessage(@RequestBody Message newMessage,@PathVariable Long convId) {
 
         EntityModel<Message> entityModel = assembler.toModel(messageRepository.save(newMessage));
 
         return ResponseEntity //
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()) //
                 .body(entityModel);
+    }
+    @GetMapping("/messages")
+    CollectionModel<EntityModel<Message>> allMessages() {
+
+        List<EntityModel<Message>> messages = messageRepository.findAll().stream() //
+                .map(assembler::toModel) //
+                .collect(Collectors.toList());
+
+        return CollectionModel.of(messages, linkTo(methodOn(MessageController.class).allMessages()).withSelfRel());
     }
     @GetMapping("/conversations/{convId}/messages")
     CollectionModel<EntityModel<Message>> all(@PathVariable Long convId) {
@@ -47,6 +56,8 @@ class MessageController {
                 temp.add(message);
             }
         }
+        if(temp.isEmpty())
+            throw new ConversationNotFoundException(convId);
         List<EntityModel<Message>> messageEntity = temp.stream() //
                 .map(assembler::toModel) //
                 .collect(Collectors.toList());
@@ -61,7 +72,6 @@ class MessageController {
         Message message = messageRepository.findById(id) //
                 .orElseThrow(() -> new MessageNotFoundException(id));
 
-        message.setStatus(Status.ODCZYTANO);
         return ResponseEntity.ok(assembler.toModel(messageRepository.save(message)));
 
     }

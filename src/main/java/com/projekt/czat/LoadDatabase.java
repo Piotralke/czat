@@ -24,8 +24,8 @@ class LoadDatabase {
             personRepository.findAll().forEach(person -> log.info("Preloaded " + person));
 
 
-            messageRepository.save(new Message(5l,1l,"MacBook Pro", Status.WYSLANO,new Date()));
-            messageRepository.save(new Message(5l,2l,"iPhone", Status.ODCZYTANO,new Date()));
+            messageRepository.save(new Message(5l,1l,"MacBook Pro"));
+            messageRepository.save(new Message(5l,2l,"iPhone"));
 
             messageRepository.findAll().forEach(message -> {
                 log.info("Preloaded " + message);
