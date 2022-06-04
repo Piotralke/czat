@@ -1,5 +1,6 @@
 package com.projekt.czat;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -53,13 +54,30 @@ class PersonController {
         return CollectionModel.of(people, linkTo(methodOn(PersonController.class).all()).withSelfRel());
     }
 
-    @GetMapping("/people/{id}")
+    @GetMapping("/people/{id}/conversationName")
     EntityModel<Person> one(@PathVariable Long id) {
 
         Person person  = repository.findById(id)
                 .orElseThrow(()-> new PersonNotFoundException(id));;
 
         return assembler.toModel(person);
+
+    }
+
+
+    @GetMapping("/people/{login}")
+    EntityModel<Person> getByLogin(@PathVariable String login) {
+
+        Person result = new Person();
+        List<Person> people = repository.findAll();
+        for(Person person : people){
+            if((person.getLogin().equals(login)))
+            {
+                result=person;
+                return assembler.toModel(result);
+            }
+        }
+        throw new PersonNotFoundException(login);
 
     }
     @PutMapping("/people/{id}")

@@ -14,6 +14,7 @@ class PersonModelAssembler implements RepresentationModelAssembler<Person, Entit
 
         return EntityModel.of(person, //
                 linkTo(methodOn(PersonController.class).one(person.getId())).withSelfRel(),
+                linkTo(methodOn(PersonController.class).getByLogin(person.getLogin())).withSelfRel(),
                 linkTo(methodOn(PersonController.class).all()).withRel("people"));
     }
 }
