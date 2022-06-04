@@ -63,8 +63,15 @@ class PersonController {
         return assembler.toModel(person);
 
     }
+    @GetMapping("/people/findById/{id}")
+    EntityModel<Person> findById(@PathVariable Long id) {
 
+        Person person = repository.findById(id)
+                .orElseThrow(()-> new PersonNotFoundException(id));
 
+        return assembler.toModel(person);
+
+    }
     @GetMapping("/people/{login}")
     EntityModel<Person> getByLogin(@PathVariable String login) {
 

@@ -37,8 +37,8 @@ class MessageController {
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()) //
                 .body(entityModel);
     }
-    @GetMapping("/people/{id}/conversations/{convId}/messages")
-    CollectionModel<EntityModel<Message>> all(@PathVariable Long id,@PathVariable Long convId) {
+    @GetMapping("/conversations/{convId}/messages")
+    CollectionModel<EntityModel<Message>> all(@PathVariable Long convId) {
         List<Message> temp = new ArrayList<>();
         List<Message> messages = messageRepository.findAll();
         for(Message message : messages){
@@ -51,7 +51,7 @@ class MessageController {
                 .map(assembler::toModel) //
                 .collect(Collectors.toList());
 
-        return CollectionModel.of(messageEntity, linkTo(methodOn(MessageController.class).all(id,convId)).withSelfRel());
+        return CollectionModel.of(messageEntity, linkTo(methodOn(MessageController.class).all(convId)).withSelfRel());
 
     }
 

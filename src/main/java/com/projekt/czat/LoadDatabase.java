@@ -6,6 +6,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @Configuration
 class LoadDatabase {
 
@@ -21,8 +24,8 @@ class LoadDatabase {
             personRepository.findAll().forEach(person -> log.info("Preloaded " + person));
 
 
-            messageRepository.save(new Message(5l,1l,"MacBook Pro", Status.WYSLANO));
-            messageRepository.save(new Message(5l,2l,"iPhone", Status.ODCZYTANO));
+            messageRepository.save(new Message(5l,1l,"MacBook Pro", Status.WYSLANO,new Date()));
+            messageRepository.save(new Message(5l,2l,"iPhone", Status.ODCZYTANO,new Date()));
 
             messageRepository.findAll().forEach(message -> {
                 log.info("Preloaded " + message);

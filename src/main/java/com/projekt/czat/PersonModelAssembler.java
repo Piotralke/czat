@@ -13,7 +13,7 @@ class PersonModelAssembler implements RepresentationModelAssembler<Person, Entit
     public EntityModel<Person> toModel(Person person) {
 
         return EntityModel.of(person, //
-                linkTo(methodOn(PersonController.class).one(person.getId())).withSelfRel(),
+                linkTo(methodOn(PersonController.class).findById(person.getId())).withSelfRel(),
                 linkTo(methodOn(PersonController.class).getByLogin(person.getLogin())).withSelfRel(),
                 linkTo(methodOn(PersonController.class).all()).withRel("people"));
     }

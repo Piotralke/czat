@@ -15,7 +15,7 @@ class MessageModelAssembler implements RepresentationModelAssembler<Message, Ent
         // Unconditional links to single-item resource and aggregate root
 
         EntityModel<Message> messageModel = EntityModel.of(message,
-                linkTo(methodOn(MessageController.class).all(message.getsenderId(),message.getConversationId())).withRel("messages"));
+                linkTo(methodOn(MessageController.class).all(message.getConversationId())).withRel("messages"));
 
         // Conditional links based on state of the order
 
