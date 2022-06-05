@@ -16,7 +16,8 @@ class ConversationModelAssembler implements RepresentationModelAssembler<Convers
 
         EntityModel<Conversation> conversationModel = EntityModel.of(conversation,
                 linkTo(methodOn(ConversationController.class).getPersonConversations(conversation.getFirstId())).withRel("conversations"),
-                linkTo(methodOn(ConversationController.class).getPersonConversations(conversation.getSecondId())).withRel("conversations"));
+                linkTo(methodOn(ConversationController.class).getPersonConversations(conversation.getSecondId())).withRel("conversations"),
+                linkTo(methodOn(ConversationController.class).allConversations()).withSelfRel());
 
         return conversationModel;
     }

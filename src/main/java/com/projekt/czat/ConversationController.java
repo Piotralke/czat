@@ -2,6 +2,7 @@ package com.projekt.czat;
 
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.http.HttpHeaders;
@@ -27,7 +28,15 @@ class ConversationController {
         this.conversationRepository = conversationRepository;
         this.assembler = assembler;
     }
+    @GetMapping("/conversations")
+    CollectionModel<EntityModel<Conversation>> allConversations() {
 
+        List<EntityModel<Conversation>> conversations = conversationRepository.findAll().stream() //
+                .map(assembler::toModel) //
+                .collect(Collectors.toList());
+
+        return CollectionModel.of(conversations, linkTo(methodOn(ConversationController.class).allConversations()).withSelfRel());
+    }
     @GetMapping("/people/{id}/conversations")
     public CollectionModel<EntityModel<Conversation>> getPersonConversations(@PathVariable Long id) {
         List<Conversation> temp = new ArrayList<>();
@@ -47,5 +56,26 @@ class ConversationController {
         return CollectionModel.of(conversationEntity, linkTo(methodOn(ConversationController.class).getPersonConversations(id)).withSelfRel());
 
     }
+    @PostMapping("/conversations")
+    ResponseEntity<?> newConversations(@RequestBody Conversation newConversation) {
 
+        EntityModel<Conversation> entityModel = assembler.toModel(conversationRepository.save(newConversation));
+
+        return ResponseEntity //
+                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()) //
+                .body(entityModel);
+    }
+    @DeleteMapping("/people/{id}/conversations")
+    ResponseEntity<?> deleteConversations(@PathVariable Long id) {
+
+        List<EntityModel<Conversation>> conversations = conversationRepository.findAll().stream() //
+                .map(assembler::toModel) //
+                .collect(Collectors.toList());
+        conversations.forEach(test->{
+            if(test.getContent().getFirstId().equals(id)||test.getContent().getSecondId().equals(id)){
+                conversationRepository.deleteById(test.getContent().getId());
+            }
+        });
+        return ResponseEntity.noContent().build();
+    }
 }

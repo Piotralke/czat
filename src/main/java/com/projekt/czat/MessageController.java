@@ -65,14 +65,18 @@ class MessageController {
         return CollectionModel.of(messageEntity, linkTo(methodOn(MessageController.class).all(convId)).withSelfRel());
 
     }
+    
+    @DeleteMapping("/conversations/{convId}/messages")
+    ResponseEntity<?> deleteMessages(@PathVariable Long convId) {
 
-    @PutMapping("/messages/{id}")
-    ResponseEntity<?> updateMessage(@PathVariable Long id) {
-
-        Message message = messageRepository.findById(id) //
-                .orElseThrow(() -> new MessageNotFoundException(id));
-
-        return ResponseEntity.ok(assembler.toModel(messageRepository.save(message)));
-
+        List<EntityModel<Message>> messages = messageRepository.findAll().stream() //
+                .map(assembler::toModel) //
+                .collect(Collectors.toList());
+        messages.forEach(test->{
+            if(test.getContent().getConversationId().equals(convId)){
+                messageRepository.deleteById(test.getContent().getId());
+            }
+        });
+        return ResponseEntity.noContent().build();
     }
 }
