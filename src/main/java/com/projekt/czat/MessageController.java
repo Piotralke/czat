@@ -3,10 +3,6 @@ package com.projekt.czat;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
-import org.springframework.hateoas.MediaTypes;
-import org.springframework.hateoas.mediatype.problem.Problem;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +12,6 @@ import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-import static com.projekt.czat.ConversationController.*;
 @RestController
 class MessageController {
 
@@ -65,7 +60,7 @@ class MessageController {
         return CollectionModel.of(messageEntity, linkTo(methodOn(MessageController.class).all(convId)).withSelfRel());
 
     }
-    
+
     @DeleteMapping("/conversations/{convId}/messages")
     ResponseEntity<?> deleteMessages(@PathVariable Long convId) {
 

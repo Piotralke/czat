@@ -1,6 +1,5 @@
 package com.projekt.czat;
 
-import java.sql.Array;
 import java.util.Objects;
 
 import javax.persistence.Entity;
